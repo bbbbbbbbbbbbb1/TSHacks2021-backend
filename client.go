@@ -131,6 +131,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
+	// sendは他の人からのメッセージが投入される
 	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
 	client.hub.register <- client // hubのregisterチャネルに自分のClientを登録
 
