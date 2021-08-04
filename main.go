@@ -41,7 +41,8 @@ func main() {
 
 	e := echo.New()
 
-	initRouting(e, hub)
+	db := connectDB()
+	initRouting(e, hub, db)
 
 	e.Logger.Fatal(e.Start(":1323"))
 

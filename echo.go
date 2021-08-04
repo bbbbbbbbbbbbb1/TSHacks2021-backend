@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
+	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 )
 
@@ -13,7 +15,14 @@ func createMeeting(c echo.Context) error {
 	return nil
 }
 
-func initRouting(e *echo.Echo, hub *Hub) {
+func printConferences(db *gorm.DB) []byte {
+	conferences := findConferences(db)
+	conferences_json, _ := json.Marshal(conferences)
+	// return c.JSON(http.StatusOK, conferences_json)
+	return conferences_json
+}
+
+func initRouting(e *echo.Echo, hub *Hub, db *gorm.DB) {
 
 	e.GET("/", func(c echo.Context) error {
 		// return c.String(http.StatusOK, "Hello, World!")
@@ -36,6 +45,10 @@ func initRouting(e *echo.Echo, hub *Hub) {
 
 	e.GET("/meeting/create", createMeeting)
 
+	result := printConferences(db)
+	e.GET("/conferences", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, result)
+	})
 	e.GET("/ws", func(c echo.Context) error {
 		serveWs(hub, c.Response(), c.Request())
 		return nil
