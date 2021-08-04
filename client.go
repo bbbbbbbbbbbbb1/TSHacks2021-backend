@@ -6,6 +6,8 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -63,6 +65,7 @@ func (c *Client) readPump() {
 	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
 		_, message, err := c.conn.ReadMessage()
+		fmt.Printf(string(message) + "\n")
 		// エラー処理
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
@@ -70,9 +73,15 @@ func (c *Client) readPump() {
 			}
 			break
 		}
+
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+		messagestruct := Memo{"memo", string(message)}
+		messagejson, _ := json.Marshal(messagestruct)
+
 		// 自分のメッセージをhubのbroadcastチャネルに送り込む
-		c.hub.broadcast <- message
+		fmt.Printf("%+v\n", messagestruct)
+		fmt.Printf(string(messagejson))
+		c.hub.broadcast <- messagejson
 	}
 }
 
