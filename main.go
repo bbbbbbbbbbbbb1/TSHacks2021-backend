@@ -16,7 +16,20 @@ import (
 
 type Memo struct {
 	Messagetype string `json:"messagetype"`
+	MeetingID   int    `json:"meetingid"`
 	Message     string `json:"message"`
+}
+
+type Setting struct {
+	Messagetype   string   `json:"messagetype"`
+	Presenterlist []string `json:"presenterlist"`
+	TimeSetting   []int    `json:"timesetting"`
+}
+
+type ChangePresenter struct {
+	Messagetype  string
+	Nowpresenter string
+	TimeSetting  []int
 }
 
 //　webページに移動
