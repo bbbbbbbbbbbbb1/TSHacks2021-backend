@@ -14,9 +14,13 @@ import (
 
 // var addr = flag.String("addr", ":8080", "http service address")
 
+// type Memo struct {
+// 	Messagetype string `json:"messagetype"`
+// 	MeetingID   int    `json:"meetingid"`
+// 	Message     string `json:"message"`
+// }
 type Memo struct {
 	Messagetype string `json:"messagetype"`
-	MeetingID   int    `json:"meetingid"`
 	Message     string `json:"message"`
 }
 

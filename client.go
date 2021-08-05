@@ -73,9 +73,9 @@ func (c *Client) readPump() {
 
 		//messagestruct := struct{}{}
 
-		//jsonObj := loadJson(message)
+		jsonObj := loadJson(message)
 
-		//message_type := jsonObj.(map[string]interface{})["Messagetype"].(string)
+		message_type := jsonObj.(map[string]interface{})["Messagetype"].(string)
 
 		fmt.Printf(string(message) + "\n")
 		// エラー処理
@@ -92,8 +92,9 @@ func (c *Client) readPump() {
 
 		if message_type == "memo" {
 			message := jsonObj.(map[string]interface{})["Message"].(string)
-			MeetingID := jsonObj.(map[string]interface{})["MeetingID"].(int)
-			messagestruct = Memo{"memo", MeetingID, message}
+			//MeetingID := jsonObj.(map[string]interface{})["MeetingID"].(int)
+			//messagestruct = Memo{"memo", MeetingID, message}
+			messagestruct := Memo{"memo", message}
 		}
 
 		// messagejson, _ := json.Marshal(messagestruct)
