@@ -30,6 +30,46 @@ func setNewCOnference(db *gorm.DB) {
 	}
 }
 
+func setNewConferenceID(db *gorm.DB) (id int, err error) {
+	// 新規インスタンス生成
+	// 従来版と異なり，会議IDを返すことができます(2021/08/05 サブ活終了後に追加)．また，getDate()が不要です．
+	// 被りの無いConferenceIDが自動で生成される想定． (ConferenceIDがprimary_key制約とauto_increment制約を持つ)
+	// StartAtとEndAtの初期値はNULL
+	const layout = "2006-01-02 15:04:05"
+	now := time.Now().Format(layout)
+	conference := &Conferences{
+		StartAt:  nil,
+		EndAt:    nil,
+		UploadAt: now,
+	}
+	err = db.Create(conference).Error
+	return conference.ConferenceID, err
+}
+
+func settingEnd(db *gorm.DB, id int, end string) error {
+	// 会議IDに対応する終了時間を設定する．(2021/08/05 サブ活終了後に追加)
+	var conference Conferences
+	err := db.Model(&conference).Where("conference_id = ?", id).Update("end_at", end).Error
+	return err
+}
+
+func settingStart(db *gorm.DB, id int, start string) error {
+	// 会議IDに対応する開始時間を設定する．(2021/08/05 サブ活終了後に追加)
+	var conference Conferences
+	err := db.Model(&conference).Where("conference_id = ?", id).Update("start_at", start).Error
+	return err
+}
+
+func findParticularConference(db *gorm.DB, id int) Conferences {
+	// 会議IDに対応する構造体を返す．(2021/08/05 サブ活終了後に追加)
+	var result Conferences
+	error := db.Where("conference_id = ?", id).Find(&result).Error
+	if error != nil {
+		panic(error.Error())
+	}
+	return result
+}
+
 func findConferences(db *gorm.DB) []*Conferences {
 	// SELECT * FROM conferences
 	result := []*Conferences{}
