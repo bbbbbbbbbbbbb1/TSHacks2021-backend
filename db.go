@@ -41,6 +41,8 @@ func findConferences(db *gorm.DB) []*Conferences {
 		// }
 		return result
 	}
+
+	return nil
 }
 
 // SQLConnect DB接続

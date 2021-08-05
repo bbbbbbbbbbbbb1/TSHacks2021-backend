@@ -5,14 +5,11 @@
 package main
 
 import (
-	"flag"
 	"log"
 	"net/http"
 
 	"github.com/labstack/echo"
 )
-
-// var addr = flag.String("addr", ":8080", "http service address")
 
 type Memo struct {
 	Messagetype string `json:"messagetype"`
@@ -34,7 +31,6 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	flag.Parse()
 	hub := newHub()
 	// startEcho()
 	go hub.run() // hubのゴルーチン開始
