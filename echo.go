@@ -41,5 +41,5 @@ func initRouting(e *echo.Echo, hub *Hub) {
 		return nil
 	})
 
-	e.Logger.Fatal(e.Start(":1323"))
+	// e.Logger.Fatal(e.Start(":1323"))
 }

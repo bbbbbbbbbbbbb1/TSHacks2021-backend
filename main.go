@@ -5,7 +5,7 @@
 package main
 
 import (
-	"flag"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -34,15 +34,17 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	flag.Parse()
+	fmt.Println("Start main func.")
 	hub := newHub()
 	// startEcho()
 	go hub.run() // hubのゴルーチン開始
 
+	fmt.Println("Start echo.")
 	e := echo.New()
 
 	initRouting(e, hub)
 
+	fmt.Println("End main func.")
 	e.Logger.Fatal(e.Start(":1323"))
 
 	// http.HandleFunc("/", serveHome) // TOP画面の表示周り(それ以外はNot Found)
