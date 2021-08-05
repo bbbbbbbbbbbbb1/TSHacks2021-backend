@@ -79,9 +79,9 @@ func (c *Client) readPump() {
 
 		jsonObj := loadJson(message)
 
-		// message_type := jsonObj.(map[string]interface{})["Messagetype"].(string)
-
 		fmt.Printf(string(message) + "\n")
+		message_type := jsonObj.(map[string]interface{})["messagetype"].(string)
+
 		// エラー処理
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
@@ -94,18 +94,18 @@ func (c *Client) readPump() {
 		// messagestruct := Memo{"memo", int(1), string(message)}
 		// messagejson, _ := json.Marshal(messagestruct)
 
-		// if message_type == "memo" {
-		message_jsonobj := jsonObj.(map[string]interface{})["message"].(string)
-		//MeetingID := jsonObj.(map[string]interface{})["MeetingID"].(int)
-		//messagestruct = Memo{"memo", MeetingID, message}
-		messagestruct := Memo{"memo", message_jsonobj}
-		// }
+		var messagestruct Memo
+		if message_type == "memo" {
+			message_jsonobj := jsonObj.(map[string]interface{})["message"].(string)
+			//MeetingID := jsonObj.(map[string]interface{})["MeetingID"].(int)
+			//messagestruct = Memo{"memo", MeetingID, message}
+			messagestruct = Memo{"memo", message_jsonobj}
+		}
 
 		messagejson, _ := json.Marshal(messagestruct)
 
 		// 自分のメッセージをhubのbroadcastチャネルに送り込む
 		fmt.Printf("%+v\n", messagestruct)
-		fmt.Printf(string(messagejson))
 		c.hub.broadcast <- messagejson
 	}
 }
