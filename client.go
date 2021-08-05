@@ -5,7 +5,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -50,6 +49,12 @@ type Client struct {
 	send chan []byte // broadcastのメッセージを受け取るチャネル
 }
 
+func loadJson(byteArray []byte) interface{} {
+	var jsonObj interface{}
+	_ = json.Unmarshal(byteArray, &jsonObj)
+	return jsonObj
+}
+
 // readPump pumps messages from the websocket connection to the hub.
 //
 // The application runs readPump in a per-connection goroutine. The application
@@ -65,6 +70,13 @@ func (c *Client) readPump() {
 	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
 		_, message, err := c.conn.ReadMessage()
+
+		//messagestruct := struct{}{}
+
+		//jsonObj := loadJson(message)
+
+		//message_type := jsonObj.(map[string]interface{})["Messagetype"].(string)
+
 		fmt.Printf(string(message) + "\n")
 		// エラー処理
 		if err != nil {
@@ -74,9 +86,17 @@ func (c *Client) readPump() {
 			break
 		}
 
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-		messagestruct := Memo{"memo", string(message)}
-		messagejson, _ := json.Marshal(messagestruct)
+		// message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+		// messagestruct := Memo{"memo", int(1), string(message)}
+		// messagejson, _ := json.Marshal(messagestruct)
+
+		if message_type == "memo" {
+			message := jsonObj.(map[string]interface{})["Message"].(string)
+			MeetingID := jsonObj.(map[string]interface{})["MeetingID"].(int)
+			messagestruct = Memo{"memo", MeetingID, message}
+		}
+
+		// messagejson, _ := json.Marshal(messagestruct)
 
 		// 自分のメッセージをhubのbroadcastチャネルに送り込む
 		fmt.Printf("%+v\n", messagestruct)
