@@ -86,13 +86,13 @@ func findConferences(db *gorm.DB) []*Conferences {
 }
 
 // SQLConnect DB接続
-// 接続情報は個人で試した時のものです
+// 接続情報は庄司さんが構築してくださったデータベースにしました(2021/08/05 サブ活終了後に変更)．
 func sqlConnect() (database *gorm.DB, err error) {
 	DBMS := "mysql"
-	USER := "root"
-	PASS := "gordandsql"
-	PROTOCOL := "tcp(localhost:3306)"
-	DBNAME := "server_database"
+	USER := "b2be3f4d5c559b"
+	PASS := "ae8dccb5"
+	PROTOCOL := "tcp(us-cdbr-east-04.cleardb.com)"
+	DBNAME := "heroku_2b2939979afb8ce"
 
 	CONNECT := USER + ":" + PASS + "@" + PROTOCOL + "/" + DBNAME + "?charset=utf8&parseTime=true&loc=Asia%2FTokyo"
 	return gorm.Open(DBMS, CONNECT)
