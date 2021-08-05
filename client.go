@@ -71,11 +71,11 @@ func (c *Client) readPump() {
 	for {
 		_, message, err := c.conn.ReadMessage()
 
-		//messagestruct := struct{}{}
+		// messagestruct := struct{}{}
 
 		jsonObj := loadJson(message)
 
-		message_type := jsonObj.(map[string]interface{})["Messagetype"].(string)
+		// message_type := jsonObj.(map[string]interface{})["Messagetype"].(string)
 
 		fmt.Printf(string(message) + "\n")
 		// エラー処理
@@ -90,14 +90,14 @@ func (c *Client) readPump() {
 		// messagestruct := Memo{"memo", int(1), string(message)}
 		// messagejson, _ := json.Marshal(messagestruct)
 
-		if message_type == "memo" {
-			message := jsonObj.(map[string]interface{})["Message"].(string)
-			//MeetingID := jsonObj.(map[string]interface{})["MeetingID"].(int)
-			//messagestruct = Memo{"memo", MeetingID, message}
-			messagestruct := Memo{"memo", message}
-		}
+		// if message_type == "memo" {
+		message_jsonobj := jsonObj.(map[string]interface{})["Message"].(string)
+		//MeetingID := jsonObj.(map[string]interface{})["MeetingID"].(int)
+		//messagestruct = Memo{"memo", MeetingID, message}
+		messagestruct := Memo{"memo", message_jsonobj}
+		// }
 
-		// messagejson, _ := json.Marshal(messagestruct)
+		messagejson, _ := json.Marshal(messagestruct)
 
 		// 自分のメッセージをhubのbroadcastチャネルに送り込む
 		fmt.Printf("%+v\n", messagestruct)
