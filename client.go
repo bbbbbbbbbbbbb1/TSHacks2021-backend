@@ -36,6 +36,10 @@ var (
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
 }
 
 // Client is a middleman between the websocket connection and the hub.
@@ -91,7 +95,7 @@ func (c *Client) readPump() {
 		// messagejson, _ := json.Marshal(messagestruct)
 
 		// if message_type == "memo" {
-		message_jsonobj := jsonObj.(map[string]interface{})["Message"].(string)
+		message_jsonobj := jsonObj.(map[string]interface{})["message"].(string)
 		//MeetingID := jsonObj.(map[string]interface{})["MeetingID"].(int)
 		//messagestruct = Memo{"memo", MeetingID, message}
 		messagestruct := Memo{"memo", message_jsonobj}
