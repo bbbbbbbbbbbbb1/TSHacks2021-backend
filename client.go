@@ -142,6 +142,8 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 		return
+	} else {
+		log.Println("successed upgrade!")
 	}
 	// sendは他の人からのメッセージが投入される
 	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
