@@ -100,6 +100,18 @@ func (c *Client) readPump() {
 			//MeetingID := jsonObj.(map[string]interface{})["MeetingID"].(int)
 			//messagestruct = Memo{"memo", MeetingID, message}
 			messagestruct = Memo{"memo", message_jsonobj}
+		} else if message_type == "setting" {
+			name_list := (jsonObj.(map[string]interface{})["Namelist"]).([]interface{})
+			fmt.Println(jsonObj.(map[string]interface{})["Namelist"])
+			user_count := len(name_list)
+			//fmt.Printf("%T", user_count)
+			fmt.Println(user_count)
+			presenter_list := make([]string, user_count)
+			for i := 0; i < user_count; i++ {
+				presenter_list[i] = name_list[i].(string)
+			}
+			fmt.Println(presenter_list)
+			fmt.Printf("%T", presenter_list)
 		}
 
 		messagejson, _ := json.Marshal(messagestruct)
