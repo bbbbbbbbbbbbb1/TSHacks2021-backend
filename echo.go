@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -15,11 +14,11 @@ func createMeeting(c echo.Context) error {
 	return nil
 }
 
-func printConferences(db *gorm.DB) []byte {
+func printConferences(db *gorm.DB) []*Conferences {
 	conferences := findConferences(db)
-	conferences_json, _ := json.Marshal(conferences)
+
 	// return c.JSON(http.StatusOK, conferences_json)
-	return conferences_json
+	return conferences
 }
 
 func initRouting(e *echo.Echo, hub *Hub, db *gorm.DB) {
