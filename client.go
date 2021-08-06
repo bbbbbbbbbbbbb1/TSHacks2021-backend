@@ -53,6 +53,27 @@ type Client struct {
 	send chan []byte // broadcastのメッセージを受け取るチャネル
 }
 
+type Memo struct {
+	Messagetype string `json:"messagetype"`
+	Message     string `json:"message"`
+}
+
+type Setting struct {
+	Messagetype   string   `json:"messagetype"`
+	Presenterlist []string `json:"presenterlist"`
+	TimeSetting   []int    `json:"timesetting"`
+	Starttime     int      `json:"starttime"`
+	Endtime       int      `json:"endtime"`
+	Presentime    int      `json:"presentime"`
+	Breaktime     int      `json:"breaktime"`
+}
+
+type ChangePresenter struct {
+	Messagetype   string `json:"messagetype"`
+	Nextpresenter int    `json:"nowpresenter"`
+	TimeSetting   []int  `json:"timesetting"`
+}
+
 func loadJson(byteArray []byte) interface{} {
 	var jsonObj interface{}
 	_ = json.Unmarshal(byteArray, &jsonObj)
@@ -181,12 +202,14 @@ func (c *Client) readPump() {
 		// messagestruct := Memo{"memo", int(1), string(message)}
 		// messagejson, _ := json.Marshal(messagestruct)
 
-		var messagestruct Memo
+		var messagestruct interface{}
+
 		if message_type == "memo" {
 			message_jsonobj := jsonObj.(map[string]interface{})["message"].(string)
 			//MeetingID := jsonObj.(map[string]interface{})["MeetingID"].(int)
 			//messagestruct = Memo{"memo", MeetingID, message}
 			messagestruct = Memo{"memo", message_jsonobj}
+			//messagejson, _ := json.Marshal(messagestruct)
 		} else if message_type == "setting" {
 			name_list := (jsonObj.(map[string]interface{})["presenterlist"]).([]interface{})
 
@@ -205,24 +228,23 @@ func (c *Client) readPump() {
 
 			time_list := timelist(name_list, user_count, presen_time, break_time)
 
-			messagestruct := Setting{"setting", presenter_list, time_list, start_time, end_time, presen_time, break_time}
-			messagejson, _ := json.Marshal(messagestruct)
+			messagestruct = Setting{"setting", presenter_list, time_list, start_time, end_time, presen_time, break_time}
+			//messagejson, _ := json.Marshal(messagestruct)
 			//fmt.Println(string(messagejson))
 		} else if message_type == "change" {
-			nextpresenter := (jsonObj.(map[string]interface{})["Nextpresenter"]).(float64)
+			nextpresenter := (jsonObj.(map[string]interface{})["nextpresenter"]).(float64)
 			time_list := (jsonObj.(map[string]interface{})["timesetting"]).([]interface{})
 
 			next_presenter, time_setting := modify(time_list, nextpresenter)
 
 			//fmt.Println(left_presen_person)
-			messagestruct := ChangePresenter{"change", next_presenter, time_setting}
-			messagejson, _ := json.Marshal(messagestruct)
+			messagestruct = ChangePresenter{"change", next_presenter, time_setting}
+			//messagejson, _ := json.Marshal(messagestruct)
 
 			//fmt.Println(string(messagejson))
-
 		}
 
-		//messagejson, _ := json.Marshal(messagestruct)
+		messagejson, _ := json.Marshal(messagestruct)
 
 		// 自分のメッセージをhubのbroadcastチャネルに送り込む
 		fmt.Printf("%+v\n", messagestruct)
