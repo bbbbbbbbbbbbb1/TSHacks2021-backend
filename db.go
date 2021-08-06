@@ -125,7 +125,7 @@ type Conferences struct {
 	UploadAt     int64   `json:"uploadAt""`
 	Presenter    *string `json:"presenter"`
 	PTime        float64 `json:"pTime"`
-	BTime        float64 `json:"pTime"`
+	BTime        float64 `json:"bTime"`
 }
 
 // Conferences プレゼンター毎の発表情報のテーブル情報
