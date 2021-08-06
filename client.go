@@ -70,7 +70,7 @@ type Setting struct {
 
 type ChangePresenter struct {
 	Messagetype   string `json:"messagetype"`
-	Nextpresenter int    `json:"nowpresenter"`
+	Nextpresenter int    `json:"nextpresenter"`
 	TimeSetting   []int  `json:"timesetting"`
 }
 
