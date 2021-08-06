@@ -35,12 +35,10 @@ func setNewConferenceID(db *gorm.DB) (id int, err error) {
 	// 従来版と異なり，会議IDを返すことができます(2021/08/05 サブ活終了後に追加)．またgetDate()が不要です．
 	// 被りの無いConferenceIDが自動で生成される想定． (ConferenceIDがprimary_key制約とauto_increment制約を持つ)
 	// StartAtとEndAtの初期値はNULL
-	const layout = "2006-01-02 15:04:05"
-	now := time.Now().Format(layout)
 	conference := &Conferences{
 		StartAt:  nil,
 		EndAt:    nil,
-		UploadAt: now,
+		UploadAt: getDate(),
 	}
 	err = db.Create(conference).Error
 	return conference.ConferenceID, err
@@ -111,10 +109,9 @@ func _setNewCOnference(db *gorm.DB) error {
 }
 
 // 現在時刻取得
-func getDate() string {
-	const layout = "2006-01-02 15:04:05"
+func getDate() int64 {
 	now := time.Now()
-	return now.Format(layout)
+	return now.Unix()
 }
 
 // Conferences 会議情報のテーブル情報
@@ -123,9 +120,9 @@ type Conferences struct {
 	StartAt      *int64  `json:"startAt"`
 	EndAt        *int64  `json:"endAt"`
 	UploadAt     int64   `json:"uploadAt""`
-	Presenter    *string `json:"presenter"`
+	PresenterNum int     `json:"presenterNum"`
 	PTime        float64 `json:"pTime"`
-	BTime        float64 `json:"pTime"`
+	BTime        float64 `json:"bTime"`
 }
 
 // Conferences プレゼンター毎の発表情報のテーブル情報
