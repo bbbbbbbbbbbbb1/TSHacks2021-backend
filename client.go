@@ -112,6 +112,23 @@ func (c *Client) readPump() {
 			}
 			fmt.Println(presenter_list)
 			fmt.Printf("%T", presenter_list)
+			time_list := (jsonObj.(map[string]interface{})["Timelist"]).([]interface{})
+			presen_time := time_list[0].(float64)
+			break_time := time_list[1].(float64)
+			schedule_list := make([]Schedule, user_count)
+			for i := 0; i < user_count; i++ {
+				schedule_list[i].Presenter = name_list[i].(string)
+				if name_list[i].(string) != "break" {
+					schedule_list[i].Time = presen_time
+				} else {
+					schedule_list[i].Time = break_time
+				}
+			}
+			fmt.Println(schedule_list)
+			messagestruct := Setting{"setting", presenter_list, schedule_list}
+			messagejson, _ := json.Marshal(messagestruct)
+			fmt.Println(messagestruct)
+			fmt.Println(string(messagejson))
 		}
 
 		messagejson, _ := json.Marshal(messagestruct)
