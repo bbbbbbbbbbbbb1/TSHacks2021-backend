@@ -74,10 +74,10 @@ type ChangePresenter struct {
 	TimeSetting   []int  `json:"timesetting"`
 }
 
-func loadJson(byteArray []byte) interface{} {
+func loadJson(byteArray []byte) (interface{}, error) {
 	var jsonObj interface{}
-	_ = json.Unmarshal(byteArray, &jsonObj)
-	return jsonObj
+	err := json.Unmarshal(byteArray, &jsonObj)
+	return jsonObj, err
 }
 
 func presenlist(name_list []interface{}) ([]string, int) {
@@ -185,8 +185,10 @@ func (c *Client) readPump() {
 
 		// messagestruct := struct{}{}
 
-		jsonObj := loadJson(message)
-
+		jsonObj, jsonerr := loadJson(message)
+		if jsonerr != nil {
+			continue
+		}
 		fmt.Printf(string(message) + "\n")
 		message_type := jsonObj.(map[string]interface{})["messagetype"].(string)
 
