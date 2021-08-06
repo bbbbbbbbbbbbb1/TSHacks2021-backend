@@ -24,27 +24,20 @@ type Memo struct {
 	Message     string `json:"message"`
 }
 
-// type Setting struct {
-// 	Messagetype   string   `json:"messagetype"`
-// 	Presenterlist []string `json:"presenterlist"`
-// 	TimeSetting   []int    `json:"timesetting"`
-// }
-
-type Schedule struct {
-	Presenter string  `json:"presenter"`
-	Time      float64 `json:"time"`
-}
-
 type Setting struct {
-	Messagetype   string     `json:"messagetype"`
-	Presenterlist []string   `json:"presenterlist"`
-	TimeSetting   []Schedule `json:"timesetting"`
+	Messagetype   string   `json:"messagetype"`
+	Presenterlist []string `json:"presenterlist"`
+	TimeSetting   []int    `json:"timesetting"`
+	Starttime     int      `json:"starttime"`
+	Endtime       int      `json:"endtime"`
+	Presentime    int      `json:"presentime"`
+	Breaktime     int      `json:"breaktime"`
 }
 
 type ChangePresenter struct {
-	Messagetype  string
-	Nowpresenter string
-	TimeSetting  []int
+	Messagetype   string `json:"messagetype"`
+	Nextpresenter int    `json:"nowpresenter"`
+	TimeSetting   []int  `json:"timesetting"`
 }
 
 //　webページに移動
