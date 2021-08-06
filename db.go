@@ -32,7 +32,7 @@ func setNewCOnference(db *gorm.DB) {
 
 func setNewConferenceID(db *gorm.DB) (id int, err error) {
 	// 新規インスタンス生成
-	// 従来版と異なり，会議IDを返すことができます(2021/08/05 サブ活終了後に追加)．また，getDate()が不要です．
+	// 従来版と異なり，会議IDを返すことができます(2021/08/05 サブ活終了後に追加)．またgetDate()が不要です．
 	// 被りの無いConferenceIDが自動で生成される想定． (ConferenceIDがprimary_key制約とauto_increment制約を持つ)
 	// StartAtとEndAtの初期値はNULL
 	const layout = "2006-01-02 15:04:05"
@@ -123,7 +123,7 @@ func getDate() string {
 // 2列目：EndAt
 // 3列目：UploadAt
 type Conferences struct {
-	ConferenceID int
+	ConferenceID int     `gorm:"primary_key"`
 	StartAt      *string `json:"startAt" sql:"type:date"`
 	EndAt        *string `json:"endAt" sql:"type:date"`
 	UploadAt     string  `json:"uploadAt" sql:"not null;type:date"`
