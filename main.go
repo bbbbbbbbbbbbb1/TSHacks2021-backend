@@ -15,10 +15,31 @@ import (
 
 // var addr = flag.String("addr", ":8080", "http service address")
 
-type Memo struct {
-	Messagetype string `json:"messagetype"`
-	Message     string `json:"message"`
-}
+// type Memo struct {
+// 	Messagetype string `json:"messagetype"`
+// 	MeetingID   int    `json:"meetingid"`
+// 	Message     string `json:"message"`
+// }
+// type Memo struct {
+// 	Messagetype string `json:"messagetype"`
+// 	Message     string `json:"message"`
+// }
+
+// type Setting struct {
+// 	Messagetype   string   `json:"messagetype"`
+// 	Presenterlist []string `json:"presenterlist"`
+// 	TimeSetting   []int    `json:"timesetting"`
+// 	Starttime     int      `json:"starttime"`
+// 	Endtime       int      `json:"endtime"`
+// 	Presentime    int      `json:"presentime"`
+// 	Breaktime     int      `json:"breaktime"`
+// }
+
+// type ChangePresenter struct {
+// 	Messagetype   string `json:"messagetype"`
+// 	Nextpresenter int    `json:"nowpresenter"`
+// 	TimeSetting   []int  `json:"timesetting"`
+// }
 
 //　webページに移動
 func serveHome(w http.ResponseWriter, r *http.Request) {
