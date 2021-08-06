@@ -8,12 +8,6 @@ import (
 	"github.com/labstack/echo"
 )
 
-func createMeeting(c echo.Context) error {
-	// DBに会議追加
-	// 会議情報を返す
-	return nil
-}
-
 func printConferences(db *gorm.DB) []*Conferences {
 	conferences := findConferences(db)
 
@@ -42,7 +36,20 @@ func initRouting(e *echo.Echo, hub *Hub, db *gorm.DB) {
 		return c.JSON(http.StatusOK, jsonMap)
 	})
 
-	e.GET("/meeting/create", createMeeting)
+	//e.GET("/meeting/create", createMeeting)
+	e.GET("/meeting/create", func(c echo.Context) error {
+		// DBに会議追加
+		conferenceID, _ := setNewConferenceID(db)
+		// 会議IDを返す
+		//return c.JSON(http.StatusOK, conferenceID)
+
+		eventsEx := []Conferences{}
+		// 指定した複数の条件を元に複数のレコードを引っ張ってくる
+		db.Find(&eventsEx, "conference_id=?", conferenceID)
+		// 会議情報を返す
+		return c.JSON(http.StatusOK, eventsEx)
+
+	})
 
 	result := printConferences(db)
 	e.GET("/conferences", func(c echo.Context) error {
