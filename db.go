@@ -117,14 +117,21 @@ func getDate() string {
 	return now.Format(layout)
 }
 
-// Conferences ユーザー情報のテーブル情報
-// 0列目：ConferenceID
-// 1列目：StartAt
-// 2列目：EndAt
-// 3列目：UploadAt
+// Conferences 会議情報のテーブル情報
 type Conferences struct {
 	ConferenceID int     `gorm:"primary_key"`
-	StartAt      *string `json:"startAt" sql:"type:date"`
-	EndAt        *string `json:"endAt" sql:"type:date"`
-	UploadAt     string  `json:"uploadAt" sql:"not null;type:date"`
+	StartAt      *int64  `json:"startAt"`
+	EndAt        *int64  `json:"endAt"`
+	UploadAt     int64   `json:"uploadAt""`
+	Presenter    *string `json:"presenter"`
+	PTime        float64 `json:"pTime"`
+	BTime        float64 `json:"pTime"`
+}
+
+// Conferences プレゼンター毎の発表情報のテーブル情報
+type Presentations struct {
+	ConferenceID int
+	Number       int     `json:"number"`
+	Presenter    string  `json:"presenter"`
+	Time         float64 `json:"time"`
 }
