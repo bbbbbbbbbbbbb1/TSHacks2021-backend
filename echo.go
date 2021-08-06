@@ -38,8 +38,17 @@ func initRouting(e *echo.Echo, hub *Hub, db *gorm.DB) {
 
 	//e.GET("/meeting/create", createMeeting)
 	e.GET("/meeting/create", func(c echo.Context) error {
+		// 設定情報を受け取る
+		// URLからパラメータ取得
+
+		// 設定情報（仮）
+		ptime := 0.0
+		btime := 0.0
+		num := 0
+		names := []string{"Golang", "Java"}
+
 		// DBに会議追加
-		conferenceID, _ := setNewConferenceID(db)
+		conferenceID, _ := setNewConferenceID(db, ptime, btime, names, num)
 		// 会議IDを返す
 		//return c.JSON(http.StatusOK, conferenceID)
 
