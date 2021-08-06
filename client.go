@@ -304,8 +304,11 @@ func (c *Client) writePump() {
 func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
+		fmt.Println("unsuccessed upgrade.")
 		log.Println(err)
 		return
+	} else {
+		fmt.Println("successed upgrade!")
 	}
 	// sendは他の人からのメッセージが投入される
 	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
