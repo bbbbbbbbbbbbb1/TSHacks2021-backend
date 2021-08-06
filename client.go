@@ -64,7 +64,7 @@ type Setting struct {
 	TimeSetting   []int    `json:"timesetting"`
 	Starttime     int      `json:"starttime"`
 	Endtime       int      `json:"endtime"`
-	Presentime    int      `json:"presentime"`
+	Presentime    int      `json:"presenttime"`
 	Breaktime     int      `json:"breaktime"`
 }
 
@@ -242,6 +242,8 @@ func (c *Client) readPump() {
 			//messagejson, _ := json.Marshal(messagestruct)
 
 			//fmt.Println(string(messagejson))
+		} else {
+			return
 		}
 
 		messagejson, _ := json.Marshal(messagestruct)
