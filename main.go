@@ -24,10 +24,21 @@ type Memo struct {
 	Message     string `json:"message"`
 }
 
+// type Setting struct {
+// 	Messagetype   string   `json:"messagetype"`
+// 	Presenterlist []string `json:"presenterlist"`
+// 	TimeSetting   []int    `json:"timesetting"`
+// }
+
+type Schedule struct {
+	Presenter string  `json:"presenter"`
+	Time      float64 `json:"time"`
+}
+
 type Setting struct {
-	Messagetype   string   `json:"messagetype"`
-	Presenterlist []string `json:"presenterlist"`
-	TimeSetting   []int    `json:"timesetting"`
+	Messagetype   string     `json:"messagetype"`
+	Presenterlist []string   `json:"presenterlist"`
+	TimeSetting   []Schedule `json:"timesetting"`
 }
 
 type ChangePresenter struct {
