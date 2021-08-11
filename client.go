@@ -56,6 +56,8 @@ type Client struct {
 type Memo struct {
 	Messagetype string `json:"messagetype"`
 	Message     string `json:"message"`
+	Presenter   int    `json:"presenter"`
+	Sender      string `json:"sender"`
 }
 
 type Setting struct {
@@ -208,9 +210,12 @@ func (c *Client) readPump() {
 
 		if message_type == "memo" {
 			message_jsonobj := jsonObj.(map[string]interface{})["message"].(string)
+			presenter := jsonObj.(map[string]interface{})["presenter"].(float64)
+			presenter_id := int(presenter)
+			sender := jsonObj.(map[string]interface{})["sender"].(string)
 			//MeetingID := jsonObj.(map[string]interface{})["MeetingID"].(int)
 			//messagestruct = Memo{"memo", MeetingID, message}
-			messagestruct = Memo{"memo", message_jsonobj}
+			messagestruct = Memo{"memo", message_jsonobj, presenter_id, sender}
 			//messagejson, _ := json.Marshal(messagestruct)
 		} else if message_type == "setting" {
 			name_list := (jsonObj.(map[string]interface{})["presenterlist"]).([]interface{})
