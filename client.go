@@ -185,6 +185,13 @@ func (c *Client) readPump() {
 	for {
 		_, message, err := c.conn.ReadMessage()
 
+		if err != nil {
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				log.Printf("error: %v", err)
+			}
+			break
+		}
+
 		// messagestruct := struct{}{}
 
 		jsonObj, jsonerr := loadJson(message)
@@ -228,7 +235,7 @@ func (c *Client) readPump() {
 			start_time := int(starttime)
 			end_time := int(endtime)
 
-			presentime := (jsonObj.(map[string]interface{})["presentime"]).(float64)
+			presentime := (jsonObj.(map[string]interface{})["presenttime"]).(float64)
 			breaktime := (jsonObj.(map[string]interface{})["breaktime"]).(float64)
 			presen_time := int(presentime)
 			break_time := int(breaktime)
