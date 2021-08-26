@@ -92,7 +92,7 @@ func settingStart(db *gorm.DB, id int, start int64) error {
 	return err
 }
 
-/* 20210826追加　ここから */
+/* 20210826追加 １　ここから */
 // 会議IDに対応する発表者リストを返す．
 func findParticularPresenters(db *gorm.DB, id int) []string {
 	tmp := []*Presentations{}
