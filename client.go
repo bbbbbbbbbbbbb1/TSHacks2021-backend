@@ -278,10 +278,22 @@ func (c *Client) readPump() {
 			messagestruct = Setting{"setting", presenter_list, time_list, start_time, end_time, presen_time, break_time}
 
 			id := 5
-			settingStart(db, id, int64(start_time))
-			settingEnd(db, id, int64(end_time))
-			settingPresentTime(db, id, int64(presen_time))
-			settingBreakTime(db, id, int64(break_time))
+			err := settingStart(db, id, int64(start_time))
+			if err != nil {
+				fmt.Println(err)
+			}
+			err = settingEnd(db, id, int64(end_time))
+			if err != nil {
+				fmt.Println(err)
+			}
+			err = settingPresentTime(db, id, int64(presen_time))
+			if err != nil {
+				fmt.Println(err)
+			}
+			err = settingBreakTime(db, id, int64(break_time))
+			if err != nil {
+				fmt.Println(err)
+			}
 
 			//messagejson, _ := json.Marshal(messagestruct)
 			//fmt.Println(string(messagejson))
