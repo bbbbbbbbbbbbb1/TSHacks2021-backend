@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
@@ -60,12 +61,12 @@ func initRouting(e *echo.Echo, hub *Hub, db *gorm.DB) {
 
 	})
 
-	result := printConferences(db)
 	e.GET("/conferences", func(c echo.Context) error {
+		result := printConferences(db)
 		return c.JSON(http.StatusOK, result)
 	})
 
-	e.GET("/setting", func(c echo.Context) error {
+	e.GET("/setting/:id", func(c echo.Context) error {
 		type InitSetting struct {
 			Presenterlist []string `json:"presenterlist"`
 			TimeSetting   []int    `json:"timesetting"`
@@ -76,7 +77,8 @@ func initRouting(e *echo.Echo, hub *Hub, db *gorm.DB) {
 			PresenterNum  int      `json:"presenternum"`
 		}
 
-		id := 175
+		// id := 175
+		id, _ := strconv.Atoi(c.Param("id"))
 		result := findParticularConference(db, id)
 		starttime := int(*result.StartAt)
 		endtime := int(*result.EndAt)
