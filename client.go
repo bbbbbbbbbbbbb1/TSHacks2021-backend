@@ -276,6 +276,13 @@ func (c *Client) readPump() {
 			time_list := timelist(presenter_list, user_count, presen_time, break_time)
 
 			messagestruct = Setting{"setting", presenter_list, time_list, start_time, end_time, presen_time, break_time}
+
+			id := 5
+			settingStart(db, id, int64(start_time))
+			settingEnd(db, id, int64(end_time))
+			settingPresentTime(db, id, int64(presen_time))
+			settingBreakTime(db, id, int64(break_time))
+
 			//messagejson, _ := json.Marshal(messagestruct)
 			//fmt.Println(string(messagejson))
 		} else if message_type == "change" {
@@ -288,6 +295,8 @@ func (c *Client) readPump() {
 			messagestruct = ChangePresenter{"change", next_presenter, time_setting}
 			//messagejson, _ := json.Marshal(messagestruct)
 			//fmt.Println(string(messagejson))
+			id := 5
+			changePresenter(db, float64(time_setting[next_presenter-1]), id)
 		} else {
 			return
 		}
