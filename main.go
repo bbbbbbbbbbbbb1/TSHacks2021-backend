@@ -5,19 +5,13 @@
 package main
 
 import (
-	"flag"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo"
 )
-
-// var addr = flag.String("addr", ":8080", "http service address")
-
-type Memo struct {
-	Messagetype string `json:"messagetype"`
-	Message     string `json:"message"`
-}
 
 //　webページに移動
 func serveHome(w http.ResponseWriter, r *http.Request) {
@@ -30,20 +24,29 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	http.ServeFile(w, r, "home.html")
+	http.ServeFile(w, r, "./public/home.html")
 }
 
 func main() {
-	flag.Parse()
+	fmt.Println("Start main func.")
+	port := os.Getenv("PORT")
+	if port == "" {
+		fmt.Println("$PORT must be set")
+	}
+
 	hub := newHub()
 	// startEcho()
 	go hub.run() // hubのゴルーチン開始
 
+	fmt.Println("Start echo.")
 	e := echo.New()
 
-	initRouting(e, hub)
+	db := connectDB()
+	initRouting(e, hub, db)
 
-	e.Logger.Fatal(e.Start(":1323"))
+	fmt.Println("End main func.")
+	// e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(":" + port))
 
 	// http.HandleFunc("/", serveHome) // TOP画面の表示周り(それ以外はNot Found)
 	// // websockerの扱い(直接アクセスはBad Request)
