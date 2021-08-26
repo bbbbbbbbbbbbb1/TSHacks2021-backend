@@ -95,13 +95,13 @@ func presenlist(name_list []interface{}) ([]string, int) {
 }
 
 // 時間のリストの作成
-func timelist(name_list []interface{}, user_count int, presen_time int, break_time int) []int {
+func timelist(presenter_list []string, user_count int, presen_time int, break_time int) []int {
 	time_list := make([]int, user_count)
 	//開始時間と終了時間を送る
 
 	//timesettingの配列
 	for i := 0; i < user_count; i++ {
-		if name_list[i].(string) != "break" {
+		if presenter_list[i] != "break" {
 			time_list[i] = presen_time
 		} else {
 			time_list[i] = break_time
@@ -254,7 +254,7 @@ func (c *Client) readPump() {
 			presen_time := int(presentime)
 			break_time := int(breaktime)
 
-			time_list := timelist(name_list, user_count, presen_time, break_time)
+			time_list := timelist(presenter_list, user_count, presen_time, break_time)
 
 			messagestruct = Setting{"setting", presenter_list, time_list, start_time, end_time, presen_time, break_time}
 			//messagejson, _ := json.Marshal(messagestruct)
