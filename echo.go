@@ -44,8 +44,8 @@ func initRouting(e *echo.Echo, hub *Hub, db *gorm.DB) {
 		// 設定情報（仮）
 		ptime := 0.0
 		btime := 0.0
-		num := 0
-		names := []string{"Golang", "Java"}
+		names := []string{"Golang", "Java", "Python"}
+		num := len(names)
 
 		// DBに会議追加
 		conferenceID, _ := setNewConferenceID(db, ptime, btime, names, num)
@@ -60,8 +60,30 @@ func initRouting(e *echo.Echo, hub *Hub, db *gorm.DB) {
 
 	})
 
-	result := printConferences(db)
+	e.GET("/meeting/start", func(c echo.Context) error {
+		id := 275 // dummy
+		err := settingStart(db, id, 1628225412)
+		if err != nil {
+			panic(err.Error())
+		}
+		result := findParticularConference(db, id)
+
+		return c.JSON(http.StatusOK, result.StartAt)
+	})
+
+	e.GET("/meeting/change", func(c echo.Context) error {
+		id := 375 // dummy
+		err := changePresenter(db, 600, id)
+		if err != nil {
+			panic(err.Error())
+		}
+		result := findParticularConference(db, id)
+
+		return c.JSON(http.StatusOK, result)
+	})
+
 	e.GET("/conferences", func(c echo.Context) error {
+		result := printConferences(db)
 		return c.JSON(http.StatusOK, result)
 	})
 	e.GET("/ws", func(c echo.Context) error {
