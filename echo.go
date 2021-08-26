@@ -66,6 +66,11 @@ func initRouting(e *echo.Echo, hub *Hub, db *gorm.DB) {
 		return c.JSON(http.StatusOK, result)
 	})
 
+	e.GET("/presentation", func(c echo.Context) error {
+		result := findPresentations(db)
+		return c.JSON(http.StatusOK, result)
+	})
+
 	e.GET("/setting/:id", func(c echo.Context) error {
 		type InitSetting struct {
 			Presenterlist []string `json:"presenterlist"`
