@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/jinzhu/gorm"
 )
 
 const (
@@ -32,6 +33,16 @@ var (
 	newline = []byte{'\n'}
 	space   = []byte{' '}
 )
+
+var (
+	db *gorm.DB
+)
+
+func dbsetting(database *gorm.DB) {
+	db = database
+	//conference_data := findParticularConference(db, 175)
+	//fmt.Println(conference_data)
+}
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -95,13 +106,13 @@ func presenlist(name_list []interface{}) ([]string, int) {
 }
 
 // 時間のリストの作成
-func timelist(name_list []interface{}, user_count int, presen_time int, break_time int) []int {
+func timelist(presenter_list []string, user_count int, presen_time int, break_time int) []int {
 	time_list := make([]int, user_count)
 	//開始時間と終了時間を送る
 
 	//timesettingの配列
 	for i := 0; i < user_count; i++ {
-		if name_list[i].(string) != "break" {
+		if presenter_list[i] != "break" {
 			time_list[i] = presen_time
 		} else {
 			time_list[i] = break_time
@@ -122,25 +133,30 @@ func modify(time_list []interface{}, nextpresenter float64) (int, []int) {
 	left_presenter := 0
 
 	//各設定の時刻をもらう
-	//conference_data := findParticularConference(db,id)
-	//start_time := int(*(conference_data.StartAt))
-	//end_time := int(*(conference_data.EndAt))
-	//break_time := int(conference_data.BTime)
+	conference_data := findParticularConference(db, 5)
+	fmt.Println(conference_data)
+	start_time := int(*(conference_data.StartAt))
+	end_time := int(*(conference_data.EndAt))
+	//presen_time := int(conference_data.PTime)
+	break_time := int(conference_data.BTime)
+	//fmt.Println(start_time)
+	//fmt.Println(end_time)
+	//fmt.Println(presen_time)
 
 	time_setting := make([]int, user_count)
 	//休憩回数と残りの発表者のカウント
 	for i := 0; i < user_count; i++ {
 		time_setting[i] = int(time_list[i].(float64))
-		if i >= int(nextpresenter) && time_setting[i] == 10 {
-			break_count += 1
-		} else if i >= int(nextpresenter) && time_setting[i] != 10 {
-			left_presenter += 1
-		}
-		// if i >= int(nextpresenter) && time_setting[i] == break_time {
+		// if i >= int(nextpresenter) && time_setting[i] == 10 {
 		// 	break_count += 1
-		// } else if i >= int(nextpresenter) && time_setting[i] != break_time {
+		// } else if i >= int(nextpresenter) && time_setting[i] != 10 {
 		// 	left_presenter += 1
 		// }
+		if i >= int(nextpresenter) && time_setting[i] == break_time {
+			break_count += 1
+		} else if i >= int(nextpresenter) && time_setting[i] != break_time {
+			left_presenter += 1
+		}
 	}
 	//fmt.Println(break_count)
 
@@ -159,8 +175,9 @@ func modify(time_list []interface{}, nextpresenter float64) (int, []int) {
 
 	//会議全体の発表時間
 	var meeting_time int
-	meeting_time = 150
-	//meeting_time = end_time - start_time
+	//meeting_time = 150
+	meeting_time = end_time - start_time
+	fmt.Println(meeting_time)
 
 	//残りの一人あたりの発表時間
 	var left_presen_person int
@@ -172,21 +189,23 @@ func modify(time_list []interface{}, nextpresenter float64) (int, []int) {
 	if meetingtime_left < 0 {
 		//会議の残り時間
 		left_time := meeting_time - finish_time
-		break_time_left := 10 * break_count
-		// break_time_left := break_time * break_count
+		//break_time_left := 10 * break_count
+		break_time_left := break_time * break_count
 		//発表に使える残り時間
 		left_presen_time := left_time - int(break_time_left)
 		left_presen_person = left_presen_time / int(left_presenter)
-	}
-	//次の発表者から休憩時間以外の時間を変更
-	for j := next_presenter; j < int(user_count); j++ {
-		if time_setting[j] != 10 {
-			time_setting[j] = left_presen_person
+
+		//次の発表者から休憩時間以外の時間を変更
+		for j := next_presenter; j < int(user_count); j++ {
+			// if time_setting[j] != 10 {
+			// 	time_setting[j] = left_presen_person
+			// }
+			if time_setting[j] != break_time {
+				time_setting[j] = left_presen_person
+			}
 		}
-		// if time_setting[j] != break_time {
-		// 	time_setting[j] = left_presen_person
-		// }
 	}
+
 	return next_presenter, time_setting
 }
 
@@ -254,7 +273,7 @@ func (c *Client) readPump() {
 			presen_time := int(presentime)
 			break_time := int(breaktime)
 
-			time_list := timelist(name_list, user_count, presen_time, break_time)
+			time_list := timelist(presenter_list, user_count, presen_time, break_time)
 
 			messagestruct = Setting{"setting", presenter_list, time_list, start_time, end_time, presen_time, break_time}
 			//messagejson, _ := json.Marshal(messagestruct)
@@ -268,7 +287,6 @@ func (c *Client) readPump() {
 			//fmt.Println(left_presen_person)
 			messagestruct = ChangePresenter{"change", next_presenter, time_setting}
 			//messagejson, _ := json.Marshal(messagestruct)
-
 			//fmt.Println(string(messagejson))
 		} else {
 			return

@@ -92,6 +92,44 @@ func settingStart(db *gorm.DB, id int, start int64) error {
 	return err
 }
 
+/* 20210826追加 １　ここから */
+// 会議IDに対応する発表者リストを返す．
+func findParticularPresenters(db *gorm.DB, id int) []string {
+	tmp := []*Presentations{}
+	error := db.Where("conference_id = ?", id).Select("presenter").Find(&tmp).Error
+	if error != nil {
+		panic(error.Error())
+	}
+	result := []string{}
+	for _, presen := range tmp {
+		result = append(result, presen.Presenter)
+	}
+	return result
+}
+
+// 会議IDに対応する発表構造体を返す．
+func findParticularPresentations(db *gorm.DB, id int) []*Presentations {
+	result := []*Presentations{}
+	error := db.Where("conference_id = ?", id).Find(&result).Error
+	if error != nil {
+		panic(error.Error())
+	}
+	return result
+}
+
+// 全発表の全情報の構造体配列を返す
+func findPresentations(db *gorm.DB) []*Presentations {
+	// SELECT * FROM conferences
+	result := []*Presentations{}
+	error := db.Find(&result).Error
+	if error == nil && len(result) != 0 {
+		return result
+	}
+	return nil
+}
+
+/* 20210826追加　ここまで */
+
 func findParticularConference(db *gorm.DB, id int) Conferences {
 	var result Conferences
 	error := db.Where("conference_id = ?", id).Find(&result).Error
