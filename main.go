@@ -32,6 +32,7 @@ func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		fmt.Println("$PORT must be set")
+		port = "1323"
 	}
 
 	hub := newHub()
@@ -42,6 +43,9 @@ func main() {
 	e := echo.New()
 
 	db := connectDB()
+
+	dbsetting(db)
+
 	initRouting(e, hub, db)
 
 	fmt.Println("End main func.")
