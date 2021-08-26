@@ -64,6 +64,34 @@ func initRouting(e *echo.Echo, hub *Hub, db *gorm.DB) {
 	e.GET("/conferences", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, result)
 	})
+
+	e.GET("/setting", func(c echo.Context) error {
+		type InitSetting struct {
+			Presenterlist []string `json:"presenterlist"`
+			TimeSetting   []int    `json:"timesetting"`
+			Starttime     int      `json:"starttime"`
+			Endtime       int      `json:"endtime"`
+			Presentime    int      `json:"presenttime"`
+			Breaktime     int      `json:"breaktime"`
+			PresenterNum  int      `json:"presenternum"`
+		}
+
+		id := 175
+		result := findParticularConference(db, id)
+		starttime := int(*result.StartAt)
+		endtime := int(*result.EndAt)
+		presentime := int(result.PTime)
+		breaktime := int(result.BTime)
+		presenter_num := result.PresenterNum
+		presenter_list := findParticularPresenters(db, id)
+		time_list := timelist(presenter_list, len(presenter_list), presentime, breaktime)
+		message := InitSetting{presenter_list, time_list, starttime, endtime, presentime, breaktime, presenter_num}
+
+		// messagejson, _ := json.Marshal(message)
+
+		return c.JSON(http.StatusOK, message)
+	})
+
 	e.GET("/ws", func(c echo.Context) error {
 		serveWs(hub, c.Response(), c.Request())
 		return nil
