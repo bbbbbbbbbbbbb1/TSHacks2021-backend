@@ -85,8 +85,8 @@ func initRouting(e *echo.Echo, hub *Hub, db *gorm.DB) {
 		// id := 175
 		id, _ := strconv.Atoi(c.Param("id"))
 		result := findParticularConference(db, id)
-		starttime := int(*result.StartAt)
-		endtime := int(*result.EndAt)
+		starttime := int(result.StartAt)
+		endtime := int(result.EndAt)
 		presentime := int(result.PTime)
 		breaktime := int(result.BTime)
 		presenter_num := result.PresenterNum

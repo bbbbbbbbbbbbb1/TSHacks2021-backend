@@ -54,16 +54,16 @@ func changePresenter(db *gorm.DB, pt float64, id int) error {
 func resetParticularConference(db *gorm.DB, id int, ptime float64, btime float64, names []string, num int) (err error) {
 
 	// conferencesに現在保持している情報を削除
-	db.Debug().Delete(&Conferences{}, "conference_id = ?", id)
+	err = db.Debug().Delete(&Conferences{}, "conference_id = ?", id).Error
 	// presentationsに現在保持している情報を削除
-	db.Debug().Delete(&Presentations{}, "conference_id = ?", id)
+	err = db.Debug().Delete(&Presentations{}, "conference_id = ?", id).Error
 
 	// 会議インスタンス再作成（setNewConference準拠）
 	now := getDate()
 	conference := &Conferences{
 		ConferenceID: id,
-		StartAt:      nil,
-		EndAt:        nil,
+		StartAt:      0,
+		EndAt:        0,
 		UploadAt:     now,
 		PresenterNum: -1,
 		PTime:        ptime,
@@ -95,8 +95,8 @@ func resetParticularConference(db *gorm.DB, id int, ptime float64, btime float64
 func setNewConferenceID(db *gorm.DB, ptime float64, btime float64, names []string, num int) (id int, err error) {
 	now := getDate()
 	conference := &Conferences{
-		StartAt:      nil,
-		EndAt:        nil,
+		StartAt:      0,
+		EndAt:        0,
 		UploadAt:     now,
 		PresenterNum: -1,
 		PTime:        ptime,
@@ -133,7 +133,10 @@ func settingEnd(db *gorm.DB, id int, end int64) error {
 
 func settingStart(db *gorm.DB, id int, start int64) error {
 	var conference Conferences
+	fmt.Println("start:")
+	fmt.Println(start)
 	err := db.Model(&conference).Where("conference_id = ?", id).Update("start_at", start).Error
+
 	return err
 }
 
@@ -213,6 +216,7 @@ func settingMemo(db *gorm.DB, id int, writer string, content string) error {
 
 func findParticularConference(db *gorm.DB, id int) Conferences {
 	var result Conferences
+	fmt.Println(id)
 	error := db.Where("conference_id = ?", id).Find(&result).Error
 	if error != nil {
 		panic(error.Error())
@@ -248,8 +252,8 @@ func sqlConnect() (database *gorm.DB, err error) {
 // StartAtとEndAtの初期値はNULL
 func _setNewCOnference(db *gorm.DB) error {
 	err := db.Create(&Conferences{
-		StartAt:  nil,
-		EndAt:    nil,
+		StartAt:  0,
+		EndAt:    0,
 		UploadAt: getDate(),
 	}).Error
 	return err
@@ -264,8 +268,8 @@ func getDate() int64 {
 // Conferences 会議情報のテーブル情報
 type Conferences struct {
 	ConferenceID int     `gorm:"primary_key"`
-	StartAt      *int64  `json:"startAt"`
-	EndAt        *int64  `json:"endAt"`
+	StartAt      int64   `json:"startAt"`
+	EndAt        int64   `json:"endAt"`
 	UploadAt     int64   `json:"uploadAt""`
 	PresenterNum int     `json:"presenterNum"`
 	PTime        float64 `json:"pTime"`

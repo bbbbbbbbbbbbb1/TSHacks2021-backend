@@ -132,11 +132,12 @@ func modify(time_list []interface{}, nextpresenter float64) (int, []int) {
 	//残りのpresenter
 	left_presenter := 0
 
+	id := 5
 	//各設定の時刻をもらう
-	conference_data := findParticularConference(db, 5)
+	conference_data := findParticularConference(db, id)
 	fmt.Println(conference_data)
-	start_time := int(*(conference_data.StartAt))
-	end_time := int(*(conference_data.EndAt))
+	start_time := int(conference_data.StartAt)
+	end_time := int(conference_data.EndAt)
 	//presen_time := int(conference_data.PTime)
 	break_time := int(conference_data.BTime)
 	//fmt.Println(start_time)
@@ -278,19 +279,32 @@ func (c *Client) readPump() {
 			messagestruct = Setting{"setting", presenter_list, time_list, start_time, end_time, presen_time, break_time}
 
 			id := 5
+			// err := settingStart(db, id, int64(start_time))
+			// if err != nil {
+			// 	fmt.Println(err)
+			// }
+			// err = settingEnd(db, id, int64(end_time))
+			// if err != nil {
+			// 	fmt.Println(err)
+			// }
+			// err = settingPresentTime(db, id, int64(presen_time))
+			// if err != nil {
+			// 	fmt.Println(err)
+			// }
+			// err = settingBreakTime(db, id, int64(break_time))
+			// if err != nil {
+			// 	fmt.Println(err)
+			// }
+
+			err = resetParticularConference(db, id, presentime, breaktime, presenter_list, user_count)
+			if err != nil {
+				fmt.Println(err)
+			}
 			err := settingStart(db, id, int64(start_time))
 			if err != nil {
 				fmt.Println(err)
 			}
 			err = settingEnd(db, id, int64(end_time))
-			if err != nil {
-				fmt.Println(err)
-			}
-			err = settingPresentTime(db, id, int64(presen_time))
-			if err != nil {
-				fmt.Println(err)
-			}
-			err = settingBreakTime(db, id, int64(break_time))
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -301,7 +315,12 @@ func (c *Client) readPump() {
 			nextpresenter := (jsonObj.(map[string]interface{})["nextpresenter"]).(float64)
 			time_list := (jsonObj.(map[string]interface{})["timesetting"]).([]interface{})
 
+			fmt.Println(time_list)
+
 			next_presenter, time_setting := modify(time_list, nextpresenter)
+
+			fmt.Println("time_setting")
+			fmt.Println(time_setting)
 
 			//fmt.Println(left_presen_person)
 			messagestruct = ChangePresenter{"change", next_presenter, time_setting}
