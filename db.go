@@ -137,6 +137,18 @@ func settingStart(db *gorm.DB, id int, start int64) error {
 	return err
 }
 
+func settingPresentTime(db *gorm.DB, id int, presenttime int64) error {
+	var conference Conferences
+	err := db.Model(&conference).Where("conference_id = ?", id).Update("p_time", presenttime).Error
+	return err
+}
+
+func settingBreakTime(db *gorm.DB, id int, breaktime int64) error {
+	var conference Conferences
+	err := db.Model(&conference).Where("conference_id = ?", id).Update("b_time", breaktime).Error
+	return err
+}
+
 /* 20210826追加 １　ここから */
 // 会議IDに対応する発表者リストを返す．
 func findParticularPresenters(db *gorm.DB, id int) []string {
