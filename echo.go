@@ -66,6 +66,11 @@ func initRouting(e *echo.Echo, hub *Hub, db *gorm.DB) {
 		return c.JSON(http.StatusOK, result)
 	})
 
+	e.GET("/presentation", func(c echo.Context) error {
+		result := findPresentations(db)
+		return c.JSON(http.StatusOK, result)
+	})
+
 	e.GET("/setting/:id", func(c echo.Context) error {
 		type InitSetting struct {
 			Presenterlist []string `json:"presenterlist"`
@@ -80,8 +85,8 @@ func initRouting(e *echo.Echo, hub *Hub, db *gorm.DB) {
 		// id := 175
 		id, _ := strconv.Atoi(c.Param("id"))
 		result := findParticularConference(db, id)
-		starttime := int(*result.StartAt)
-		endtime := int(*result.EndAt)
+		starttime := int(result.StartAt)
+		endtime := int(result.EndAt)
 		presentime := int(result.PTime)
 		breaktime := int(result.BTime)
 		presenter_num := result.PresenterNum
